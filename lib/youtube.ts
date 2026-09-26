@@ -11,16 +11,25 @@ export function parseVideoId(raw: string): string | null {
 }
 const api = "https://www.googleapis.com/youtube/v3";
 function key() { return process.env.YOUTUBE_DATA_API_KEY; }
+/** YouTube contentDetails.duration uses ISO 8601 days/hours/minutes/seconds. Unknown/zero stays absent. */
+export function parseVideoDuration(value: unknown): number | undefined {
+  if (typeof value !== "string") return undefined;
+  const match = /^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/.exec(value);
+  if (!match || !match.slice(1).some((part) => part !== undefined) || value.endsWith("T")) return undefined;
+  const seconds = Number(match[1] ?? 0) * 86400 + Number(match[2] ?? 0) * 3600 + Number(match[3] ?? 0) * 60 + Number(match[4] ?? 0);
+  return Number.isFinite(seconds) && seconds > 0 ? seconds : undefined;
+}
 export async function getVideoInfo(videoId: string) {
   if (!key()) throw new Error("YOUTUBE_DATA_API_KEY が設定されていません。");
   const url = new URL(api + "/videos");
-  url.searchParams.set("part", "snippet,statistics"); url.searchParams.set("id", videoId); url.searchParams.set("key", key()!);
+  url.searchParams.set("part", "snippet,statistics,contentDetails"); url.searchParams.set("id", videoId); url.searchParams.set("key", key()!);
   const res = await fetch(url, { cache: "no-store" });
   const body = await res.json();
   if (!res.ok) throw new Error(body.error?.message ?? "YouTube APIで動画情報を取得できませんでした。");
   const item = body.items?.[0];
   if (!item) throw new Error("動画が見つからないか、公開されていません。");
-  return { id: videoId, title: item.snippet.title as string, channel: item.snippet.channelTitle as string, thumbnail: item.snippet.thumbnails?.medium?.url as string | undefined, count: Number(item.statistics?.commentCount ?? 0) };
+  const durationSeconds = parseVideoDuration(item.contentDetails?.duration);
+  return { id: videoId, title: item.snippet.title as string, channel: item.snippet.channelTitle as string, thumbnail: item.snippet.thumbnails?.medium?.url as string | undefined, count: Number(item.statistics?.commentCount ?? 0), ...(durationSeconds === undefined ? {} : { durationSeconds }) };
 }
 export type RawComment = {
   id: string;

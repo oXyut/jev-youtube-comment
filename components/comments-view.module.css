@@ -15,6 +15,10 @@
 .byline time { color: #606060; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
 .originalText { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; height: 48px; overflow: hidden; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 24px !important; }
 .fullText { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.85 !important; }
+.timestampLink { display: inline; border: 0; border-radius: 3px; padding: 1px 2px; margin: -1px -2px; background: transparent; color: #245ca5; font: inherit; line-height: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.timestampLink:hover { background: #e9f1fc; }
+.timestampLink:focus-visible { outline: 2px solid #245ca5; outline-offset: 2px; }
+.timestampInRange { background: #e5eefb; color: #19467f; font-weight: 700; }
 .commentActions { display: flex; align-items: center; gap: 12px; height: 28px; margin-top: 4px; }
 .commentActions > button { flex-shrink: 0; }
 .likes { display: inline-flex; align-items: center; gap: 7px; color: #606060; font-size: 12px; min-width: 0; max-width: 90px; }

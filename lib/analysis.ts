@@ -15,7 +15,7 @@ export type Item = RawComment & {
   bothSidesProbability: number | null;
 };
 
-export type Video = { id: string; title: string; channel: string; thumbnail?: string; count: number };
+export type Video = { id: string; title: string; channel: string; thumbnail?: string; count: number; durationSeconds?: number };
 export type Tone = "critical" | "center" | "positive";
 
 export const genders = ["masculine_coded", "feminine_coded", "ambiguous"] as const;

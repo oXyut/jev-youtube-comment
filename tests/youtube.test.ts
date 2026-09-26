@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getComments, getVideoInfo, parseVideoId } from "../lib/youtube";
+import { getComments, getVideoInfo, parseVideoDuration, parseVideoId } from "../lib/youtube";
 
 function thread(id: string, author = true) {
   return {
@@ -84,4 +84,27 @@ test("video metadata still uses the actual API title, channel, thumbnail, and to
   assert.deepEqual(await getVideoInfo("video-id"), {
     id: "video-id", title: "動画タイトル", channel: "チャンネル", thumbnail: "https://example.test/thumbnail.jpg", count: 1240,
   });
+});
+
+test("YouTube ISO duration accepts day/hour/minute/second values and leaves unavailable values unknown", () => {
+  for (const [input, expected] of [["PT49M24S", 2964], ["PT1H2M3S", 3723], ["PT90M", 5400], ["P1DT2H", 93600], ["PT0.5S", 0.5]] as const) {
+    assert.equal(parseVideoDuration(input), expected);
+  }
+  for (const input of [undefined, null, 0, "", "P", "PT", "PT0S", "PT-1S", "PTInfinityS", "P1DT", "49:24", "P1Y", `PT${"9".repeat(400)}S`]) {
+    assert.equal(parseVideoDuration(input), undefined);
+  }
+});
+
+test("video metadata requests contentDetails and includes only positive known durations", async (context) => {
+  const previousKey = process.env.YOUTUBE_DATA_API_KEY;
+  process.env.YOUTUBE_DATA_API_KEY = "test-only-key";
+  context.after(() => previousKey === undefined ? delete process.env.YOUTUBE_DATA_API_KEY : process.env.YOUTUBE_DATA_API_KEY = previousKey);
+  let duration = "PT49M24S";
+  context.mock.method(globalThis, "fetch", async (input: string | URL | Request) => {
+    assert.ok(new URL(String(input)).searchParams.get("part")?.split(",").includes("contentDetails"));
+    return Response.json({ items: [{ snippet: { title: "動画", channelTitle: "チャンネル" }, contentDetails: { duration } }] });
+  });
+  assert.equal((await getVideoInfo("video-id")).durationSeconds, 2964);
+  duration = "PT0S";
+  assert.equal(Object.hasOwn(await getVideoInfo("video-id"), "durationSeconds"), false);
 });

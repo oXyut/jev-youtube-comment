@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Alert, Box, Button, Chip, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, InputAdornment, InputLabel, LinearProgress, MenuItem, Select, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Alert, Box, Button, Chip, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, InputLabel, LinearProgress, MenuItem, Select, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -10,11 +10,13 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { AnalysisLibrary } from "@/components/analysis-library";
 import type { AnalysisArchive, AnalysisMetadata, AnalysisSaveInput } from "@/lib/analysis-archive";
 import packageInfo from "../package.json";
+import { CommentFilters } from "@/components/comment-filters";
+import { TimestampAnalysis } from "@/components/timestamp-analysis";
 import { CommonFilters } from "@/components/common-filters";
 import { CommentOverview } from "@/components/comment-overview";
 import { CommentsView } from "@/components/comments-view";
 import { Demographics } from "@/components/demographics";
-import { ages, ageLabels, genders, genderLabels, defaultFilters, filterItems, groupItems, groupInRange, sortItems, toneLabels, type Filters, type Group, type Item, type Video, type Tone } from "@/lib/analysis";
+import { ages, ageLabels, genders, genderLabels, defaultFilters, filterItems, groupItems, groupInRange, sortItems, type Filters, type Group, type Item, type Video } from "@/lib/analysis";
 import { heatStages, valenceStages } from "@/lib/scales";
 import { readJsonLines } from "@/lib/stream";
 
@@ -22,7 +24,6 @@ type Usage = { inputTokens: number; outputTokens: number; estimatedCostUsd: numb
 type StreamEvent = { type: string; item?: Item; message?: string; processed?: number; total?: number; speed?: number; failures?: number; elapsedMs?: number; usage?: Usage; startedAt?: string; completedAt?: string; analyzer?: AnalysisMetadata["analyzer"] };
 const emptyUsage: Usage = { inputTokens: 0, outputTokens: 0, estimatedCostUsd: 0 };
 const formatTime = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-const tones: Tone[] = ["critical", "center", "positive"];
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -47,7 +48,11 @@ export default function Home() {
   const [loadedSavedAt, setLoadedSavedAt] = useState<string | null>(null);
   const [scope, setScope] = useState<"first100" | "all">("first100");
   const [monitorExpanded, setMonitorExpanded] = useState(false);
-  const [tab, setTab] = useState<"comments" | "demographics">("comments");
+  const [tab, setTab] = useState<"comments" | "demographics" | "timestamps">("comments");
+  const [analysisGeneration, setAnalysisGeneration] = useState(0);
+  const updateDuration = useCallback((durationSeconds: number) => {
+    setVideo(current => current && current.durationSeconds === undefined ? { ...current, durationSeconds } : current);
+  }, []);
   const [view, setView] = useState<"comparison" | "map">("comparison");
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [filtersExpanded, setFiltersExpanded] = useState(false);
@@ -81,6 +86,7 @@ export default function Home() {
   }, [filters, groups, visible, selectedGroup, selectedId]);
 
   function resetView() {
+    setAnalysisGeneration(current => current + 1);
     setFilters(defaultFilters()); setTab("comments"); setSelectedId(null); setSelectedGroup(null); setReturnState(null); setMapOpen(true);
   }
   async function loadSample() {
@@ -216,27 +222,28 @@ export default function Home() {
       <Tabs value={tab} onChange={(_, value) => setTab(value)} aria-label="分析の表示" sx={{ borderBottom: "1px solid", borderColor: "divider" }}>
         <Tab value="comments" label="コメント" id="comments-tab" aria-controls="comments-panel" />
         <Tab value="demographics" label="性別・年代別" id="demographics-tab" aria-controls="demographics-panel" />
+        <Tab value="timestamps" label="時間帯別" id="timestamps-tab" aria-controls="timestamps-panel" />
       </Tabs>
       <CommonFilters filters={filters} onChange={setFilters} count={visible.length} total={items.length} expanded={filtersExpanded} onToggle={() => setFiltersExpanded(!filtersExpanded)} />
-      <Typography variant="caption" color="text.secondary" sx={{display: "block",  mt: 1 }}>文体印象は本人の年齢・性別ではありません。グラフは投稿者数ではなく、コメント件数を示します。</Typography>
-      {tab === "comments" && <div className="analysis-toolbar">
-        <TextField label="コメントを検索" value={filters.search} onChange={event => setFilters({ ...filters, search: event.target.value })} slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> } }} sx={{ width: { xs: "100%", sm: 280 } }} />
-        <FormControl size="small" sx={{ minWidth: 155 }}><InputLabel id="tone-label">感情</InputLabel><Select labelId="tone-label" label="感情" value={filters.tone} onChange={event => setFilters({ ...filters, tone: event.target.value as Filters["tone"] })}><MenuItem value="all">すべて</MenuItem>{tones.map(tone => <MenuItem key={tone} value={tone}>{toneLabels[tone]}</MenuItem>)}<MenuItem value="both">好意・批判の両方を含む推定</MenuItem></Select></FormControl>
-        <Stack sx={{ alignItems: "center", gap: .8 }} direction="row">
-          <TextField select label="熱量の下限" value={filters.heatRange[0]} onChange={event => setFilters({ ...filters, heatRange: [Number(event.target.value), filters.heatRange[1]] })} sx={{ width: 115 }}>{[0, 1, 2, 3, 4].map(value => <MenuItem key={value} value={value} disabled={value > filters.heatRange[1]}>{value}</MenuItem>)}</TextField>
-          <Typography color="text.secondary">〜</Typography>
-          <TextField select label="熱量の上限" value={filters.heatRange[1]} onChange={event => setFilters({ ...filters, heatRange: [filters.heatRange[0], Number(event.target.value)] })} sx={{ width: 115 }}>{[0, 1, 2, 3, 4].map(value => <MenuItem key={value} value={value} disabled={value < filters.heatRange[0]}>{value}</MenuItem>)}</TextField>
-        </Stack>
+      <Typography variant="caption" color="text.secondary" sx={{display: "block",  mt: 1 }}>文体印象は本人の年齢・性別ではありません。集計は投稿者数ではなく、コメント単位です。</Typography>
+      {(tab === "comments" || tab === "timestamps") && <div className="analysis-toolbar">
+        <CommentFilters filters={filters} onChange={setFilters} />
+        {tab === "comments" && <>
         <FormControl size="small" sx={{ minWidth: 170 }}><InputLabel id="sort-label">並び順</InputLabel><Select labelId="sort-label" label="並び順" value={sortKey} onChange={event => setSortKey(event.target.value)}>{sortOptions.map(option => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}</Select></FormControl>
         <Button color="inherit" startIcon={<SwapVertIcon />} onClick={() => setSortDirection(sortDirection === "desc" ? "asc" : "desc")}>{sortKey === "newest" ? (sortDirection === "desc" ? "新しい順" : "古い順") : sortDirection === "desc" ? "多い順" : "少ない順"}</Button>
+        </>}
       </div>}
       {returnState && <Button startIcon={<ArrowBackIcon />} onClick={restoreComparison} sx={{ mb: 1 }}>元の比較条件に戻る</Button>}
       {visible.length === 0 && <Alert severity="info" sx={{ mb: 2 }} action={filters.genders.length === 0 ? <Button onClick={() => setFilters({ ...filters, genders: [...genders] })}>全選択</Button> : undefined}>条件に合うコメントはありません。性別・年代、検索、感情・熱量の条件を確認してください。</Alert>}
-      {tab === "comments" ? <Box role="tabpanel" id="comments-panel" aria-labelledby="comments-tab">
+      {tab === "comments" && <Box role="tabpanel" id="comments-panel" aria-labelledby="comments-tab">
         <CommentOverview items={sorted} selectedId={selectedId} onSelect={setSelectedId} expanded={mapOpen} onToggle={() => setMapOpen(!mapOpen)} likeScaleMaximum={likeScaleMaximum} onShowMixed={() => { setSelectedId(null); setFilters({ ...filters, tone: "both" }); }} mixedOnly={filters.tone === "both"} />
         <CommentsView items={sorted} selectedId={selectedId} onSelect={setSelectedId} />
         <Button onClick={() => setTab("demographics")} sx={{ mt: 1 }}>この条件で性別・年代別を見る →</Button>
-      </Box> : <Box role="tabpanel" id="demographics-panel" aria-labelledby="demographics-tab"><Demographics items={visible} filters={filters} view={view} onViewChange={setView} selectedKey={selectedGroup} onSelect={setSelectedGroup} onShowComments={showGroupComments} /></Box>}
+      </Box>}
+      {tab === "demographics" && <Box role="tabpanel" id="demographics-panel" aria-labelledby="demographics-tab"><Demographics items={visible} filters={filters} view={view} onViewChange={setView} selectedKey={selectedGroup} onSelect={setSelectedGroup} onShowComments={showGroupComments} /></Box>}
+      <Box role="tabpanel" id="timestamps-panel" aria-labelledby="timestamps-tab" hidden={tab !== "timestamps"}>
+        <TimestampAnalysis key={analysisGeneration} video={video} items={visible} allItems={items} active={tab === "timestamps"} onDuration={updateDuration} />
+      </Box>
     </>}
     {error && <Alert severity="error" sx={{ mt: 2 }} onClose={() => setError("")}>{error}</Alert>}
     <Dialog open={changeOpen} onClose={() => !checking && setChangeOpen(false)} fullWidth maxWidth="sm"><DialogTitle>分析する動画を変更</DialogTitle><DialogContent>{urlForm}{error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}</DialogContent><DialogActions><Button onClick={() => setChangeOpen(false)} disabled={checking}>キャンセル</Button></DialogActions></Dialog>

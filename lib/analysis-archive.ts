@@ -104,9 +104,12 @@ export function isAnalysisArchiveId(value: unknown): value is string {
 
 function parseVideo(value: unknown): Video {
   const raw = object(value, "video");
+  const durationSeconds = raw.durationSeconds === undefined ? undefined : number(raw.durationSeconds, "video.durationSeconds");
+  if (durationSeconds === 0) invalid("video.durationSeconds", "正の有限数が必要です。尺が不明な場合は省略してください。");
   return {
     id: string(raw.id, "video.id"), title: string(raw.title, "video.title"),
     channel: string(raw.channel, "video.channel"), count: number(raw.count, "video.count", true),
+    ...(durationSeconds === undefined ? {} : { durationSeconds }),
   };
 }
 function parseItem(value: unknown, index: number): Item {
