@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "assets:metadata": "node scripts/generate-metadata-assets.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -24,6 +25,7 @@
     "@types/node": "^22.18.6",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
+    "sharp": "^0.35.4",
     "tsx": "^4.23.15",
     "typescript": "^5.9.2"
   },
