@@ -1,16 +1,22 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Avatar, Box, Button, Chip, Dialog, DialogContent, DialogTitle, Divider, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { ChevronLeft, ChevronRight, Close, PersonOutlined, ThumbUpOutlined } from "@mui/icons-material";
 import { ageColors, ageLabels, genderColors, genderLabels, heatOf, toneColors, toneForScore, valenceOf, type Item } from "@/lib/analysis";
 import { central80Interval, heatStages, valenceStages } from "@/lib/scales";
+import { TimestampText } from "./timestamp-text";
 import styles from "./comments-view.module.css";
 
 type CommentsViewProps = {
   items: Item[];
   selectedId: string | null;
   onSelect: (id: string | null) => void;
+  onTimestampSelect?: (seconds: number) => void;
+  timestampRange?: { startSeconds: number; endSeconds: number } | null;
+  durationSeconds?: number | null;
+  resetKey?: string | number;
+  active?: boolean;
 };
 
 const PAGE_SIZE = 6;
@@ -109,12 +115,21 @@ function AnalysisDetail({ item, id }: { item: Item; id: string }) {
   </Box>;
 }
 
-export function CommentsView({ items, selectedId, onSelect }: CommentsViewProps) {
+export function CommentsView({ items, selectedId, onSelect, onTimestampSelect, timestampRange, durationSeconds, resetKey, active = true }: CommentsViewProps) {
   const [page, setPage] = useState(1);
+  const previousResetKey = useRef(resetKey);
   const componentId = useId();
   const pages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
   const selectedIndex = useMemo(() => items.findIndex((item) => item.id === selectedId), [items, selectedId]);
-  useEffect(() => { if (selectedIndex >= 0) setPage(Math.floor(selectedIndex / PAGE_SIZE) + 1); }, [selectedIndex]);
+  useEffect(() => {
+    // A newly selected analysis range takes precedence over a previous selection.
+    if (!Object.is(previousResetKey.current, resetKey)) {
+      previousResetKey.current = resetKey;
+      setPage(1);
+    } else if (selectedIndex >= 0) {
+      setPage(Math.floor(selectedIndex / PAGE_SIZE) + 1);
+    }
+  }, [selectedIndex, resetKey]);
   useEffect(() => { setPage((current) => Math.min(current, pages)); }, [pages]);
   const currentPage = Math.min(page, pages);
   const offset = (currentPage - 1) * PAGE_SIZE;
@@ -137,7 +152,7 @@ export function CommentsView({ items, selectedId, onSelect }: CommentsViewProps)
             <Avatar src={item.authorProfileImageUrl || undefined} alt="" sx={{ width: { xs: 36, sm: 40 }, height: { xs: 36, sm: 40 }, bgcolor: "#ECEFF1", color: "#65717C" }}><PersonOutlined /></Avatar>
             <div className={styles.commentText}>
               <div className={styles.byline}><strong title={author(item)}>{author(item)}</strong><time dateTime={item.publishedAt}>{postedAt(item.publishedAt)}</time></div>
-              <Typography component="p" variant="body2" className={styles.originalText}>{item.text}</Typography>
+              <Typography component="p" variant="body2" className={styles.originalText}><TimestampText text={item.text} onTimestampSelect={onTimestampSelect} timestampRange={timestampRange} durationSeconds={durationSeconds} className={styles.timestampLink} selectedClassName={styles.timestampInRange} /></Typography>
               <div className={styles.commentActions}>
                 <span className={styles.likes} aria-label={`いいね ${item.likeCount.toLocaleString()}件`} title={`いいね ${item.likeCount.toLocaleString()}件`}><ThumbUpOutlined sx={{ fontSize: 17, flexShrink: 0 }} /><span>{item.likeCount.toLocaleString()}</span></span>
                 <Button size="small" sx={{ minWidth: 0, p: 0, fontSize: 12, whiteSpace: "nowrap" }} onClick={() => onSelect(item.id)} aria-haspopup="dialog">全文を読む</Button>
@@ -163,7 +178,7 @@ export function CommentsView({ items, selectedId, onSelect }: CommentsViewProps)
         <IconButton aria-label="次のページ" disabled={currentPage >= pages} onClick={() => turnPage(currentPage + 1)} size="small"><ChevronRight /></IconButton>
       </Stack>
     </Stack>
-    <Dialog open={Boolean(selectedItem)} onClose={() => onSelect(null)} fullWidth maxWidth="md" aria-labelledby={`${componentId}-dialog-title`} slotProps={{ paper: { sx: { m: { xs: 1, sm: 3 }, width: { xs: "calc(100% - 16px)", sm: "calc(100% - 48px)" }, maxHeight: "calc(100% - 32px)" } } }}>
+    <Dialog open={active && Boolean(selectedItem)} onClose={() => onSelect(null)} fullWidth maxWidth="md" aria-labelledby={`${componentId}-dialog-title`} slotProps={{ paper: { sx: { m: { xs: 1, sm: 3 }, width: { xs: "calc(100% - 16px)", sm: "calc(100% - 48px)" }, maxHeight: "calc(100% - 32px)" } } }}>
       <DialogTitle id={`${componentId}-dialog-title`} sx={{ pr: 7 }}>コメントの詳細<IconButton aria-label="コメントの詳細を閉じる" onClick={() => onSelect(null)} sx={{ position: "absolute", right: 12, top: 12 }}><Close /></IconButton></DialogTitle>
       <DialogContent dividers sx={{ p: { xs: 2, sm: 3 } }}>
         {selectedItem && <>
@@ -172,7 +187,7 @@ export function CommentsView({ items, selectedId, onSelect }: CommentsViewProps)
             <div className={styles.dialogByline}><Typography variant="subtitle2" sx={{ overflowWrap: "anywhere" }}>{author(selectedItem)}</Typography><Typography variant="caption" color="text.secondary"><time dateTime={selectedItem.publishedAt}>{postedAt(selectedItem.publishedAt)}</time> · いいね {selectedItem.likeCount.toLocaleString()}件</Typography></div>
           </Stack>
           <Box component="section" aria-label="コメント全文">
-            <Typography component="p" variant="body2" className={styles.fullText}>{selectedItem.text}</Typography>
+            <Typography component="p" variant="body2" className={styles.fullText}><TimestampText text={selectedItem.text} onTimestampSelect={onTimestampSelect} timestampRange={timestampRange} durationSeconds={durationSeconds} className={styles.timestampLink} selectedClassName={styles.timestampInRange} /></Typography>
             <Box sx={{ mt: 2 }}><StyleBadges item={selectedItem} /></Box>
             <Typography variant="caption" component="p" color="text.secondary" sx={{ mt: 1 }}>文体印象は本人の年齢・性別ではありません。</Typography>
           </Box>

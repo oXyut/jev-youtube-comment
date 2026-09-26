@@ -1,0 +1,841 @@
+{
+  "format": "jev-youtube-comment-analysis",
+  "schemaVersion": 1,
+  "id": "20260926-0000-4000-8000-000000000001",
+  "savedAt": "2026-09-26T00:30:00.000Z",
+  "video": {
+    "id": "zuQb52Up9VQ",
+    "title": "時間帯別の合成検証データ（コメントは架空）",
+    "channel": "合成検証用",
+    "count": 20,
+    "durationSeconds": 2964
+  },
+  "items": [
+    {
+      "id": "timestamp-fixture-01",
+      "text": "合成コメント01： 0:00 の開始を確認。０：００ は同じ秒の繰り返しです。",
+      "publishedAt": "2026-09-26T00:00:00.000Z",
+      "likeCount": 3,
+      "authorDisplayName": "合成投稿者 01",
+      "gender": "feminine_coded",
+      "age": "pre_elementary",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.8,
+        "middle_high_school": 0.05,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.7999999999999998,
+        "4": 0.20000000000000018
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.12
+    },
+    {
+      "id": "timestamp-fixture-02",
+      "text": "合成コメント02： 0:30 と 0:45 は同じ60秒区間内です。",
+      "publishedAt": "2026-09-26T00:01:00.000Z",
+      "likeCount": 10,
+      "authorDisplayName": "合成投稿者 02",
+      "gender": "masculine_coded",
+      "age": "middle_high_school",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.8,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.8,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0.8,
+        "1": 0.19999999999999996,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0.19999999999999973,
+        "2": 0.8000000000000003,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.08
+    },
+    {
+      "id": "timestamp-fixture-03",
+      "text": "合成コメント03： 1:00 と 1:59 は区間境界確認用です。",
+      "publishedAt": "2026-09-26T00:02:00.000Z",
+      "likeCount": 17,
+      "authorDisplayName": "合成投稿者 03",
+      "gender": "masculine_coded",
+      "age": "middle_high_school",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.8,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.8,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.6000000000000001,
+        "3": 0.3999999999999999,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.2
+    },
+    {
+      "id": "timestamp-fixture-04",
+      "text": "合成コメント04： 2:05 の感情は未取得です。この区間は未取得のみです。",
+      "publishedAt": "2026-09-26T00:03:00.000Z",
+      "likeCount": 24,
+      "authorDisplayName": "合成投稿者 04",
+      "gender": "feminine_coded",
+      "age": "middle_high_school",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.8,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.7999999999999998,
+        "4": 0.20000000000000018
+      },
+      "valenceConfidence": null,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.16
+    },
+    {
+      "id": "timestamp-fixture-05",
+      "text": "合成コメント05： 3:24〜3:40 は2つの明示点です。間の全時刻には配りません。",
+      "publishedAt": "2026-09-26T00:04:00.000Z",
+      "likeCount": 31,
+      "authorDisplayName": "合成投稿者 05",
+      "gender": "feminine_coded",
+      "age": "middle_high_school",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.8,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.7999999999999998,
+        "4": 0.20000000000000018
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.5999999999999996,
+        "4": 0.40000000000000036
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.82
+    },
+    {
+      "id": "timestamp-fixture-06",
+      "text": "合成コメント06： 29:17 は任意範囲の開始直前です。",
+      "publishedAt": "2026-09-26T00:05:00.000Z",
+      "likeCount": 38,
+      "authorDisplayName": "合成投稿者 06",
+      "gender": "ambiguous",
+      "age": "middle_high_school",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.8
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.8,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.16
+    },
+    {
+      "id": "timestamp-fixture-07",
+      "text": "合成コメント07： 29:18 は任意範囲に含まれる開始時刻です。",
+      "publishedAt": "2026-09-26T00:06:00.000Z",
+      "likeCount": 4,
+      "authorDisplayName": "合成投稿者 07",
+      "gender": "ambiguous",
+      "age": "middle_high_school",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.8
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.8,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.10000000000000009,
+        "3": 0.8999999999999999,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0.7999999999999998,
+        "2": 0.20000000000000018,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.82
+    },
+    {
+      "id": "timestamp-fixture-08",
+      "text": "合成コメント08： 29:30、29:40、29:59 は同じ区間に3回言及しています。",
+      "publishedAt": "2026-09-26T00:07:00.000Z",
+      "likeCount": 11,
+      "authorDisplayName": "合成投稿者 08",
+      "gender": "masculine_coded",
+      "age": "university",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.8,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.8,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0.8,
+        "1": 0.19999999999999996,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0.19999999999999973,
+        "2": 0.8000000000000003,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.12
+    },
+    {
+      "id": "timestamp-fixture-09",
+      "text": "合成コメント09： 29:59 と 30:00 を比較します。2つの区間でも範囲全体では1件です。",
+      "publishedAt": "2026-09-26T00:08:00.000Z",
+      "likeCount": 18,
+      "authorDisplayName": "合成投稿者 09",
+      "gender": "feminine_coded",
+      "age": "university",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.8,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.5999999999999996,
+        "4": 0.40000000000000036
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.04
+    },
+    {
+      "id": "timestamp-fixture-10",
+      "text": "合成コメント10： 30:01 と 30:10 の感情は未取得です。分母には含まれます。",
+      "publishedAt": "2026-09-26T00:09:00.000Z",
+      "likeCount": 25,
+      "authorDisplayName": "合成投稿者 10",
+      "gender": "feminine_coded",
+      "age": "university",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.8,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.3999999999999999,
+        "4": 0.6000000000000001
+      },
+      "valenceConfidence": null,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.08
+    },
+    {
+      "id": "timestamp-fixture-11",
+      "text": "合成コメント11： 30:11 は任意範囲の終了直前です。",
+      "publishedAt": "2026-09-26T00:10:00.000Z",
+      "likeCount": 32,
+      "authorDisplayName": "合成投稿者 11",
+      "gender": "masculine_coded",
+      "age": "university",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.8,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.8,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.6000000000000001,
+        "4": 0.3999999999999999
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.19999999999999973,
+        "3": 0.8000000000000003,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.82
+    },
+    {
+      "id": "timestamp-fixture-12",
+      "text": "合成コメント12： 30:12 は任意範囲の終了時刻なので含まれません。",
+      "publishedAt": "2026-09-26T00:11:00.000Z",
+      "likeCount": 39,
+      "authorDisplayName": "合成投稿者 12",
+      "gender": "feminine_coded",
+      "age": "working_adult",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.05,
+        "working_adult": 0.8,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0.8,
+        "1": 0.19999999999999996,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.6000000000000001,
+        "3": 0.3999999999999999,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.12
+    },
+    {
+      "id": "timestamp-fixture-13",
+      "text": "合成コメント13： 29:20 と 30:05 に言及しています。区間の単純加算との違いを確認します。",
+      "publishedAt": "2026-09-26T00:12:00.000Z",
+      "likeCount": 5,
+      "authorDisplayName": "合成投稿者 13",
+      "gender": "feminine_coded",
+      "age": "university",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.8,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.7999999999999998,
+        "4": 0.20000000000000018
+      },
+      "heatProbabilities": {
+        "0": 0.4,
+        "1": 0.6,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.12
+    },
+    {
+      "id": "timestamp-fixture-14",
+      "text": "合成コメント14： 29:18、29:18、２９：１８ は同じ秒です。すべての原文リンクを残し、件数は1件です。",
+      "publishedAt": "2026-09-26T00:13:00.000Z",
+      "likeCount": 12,
+      "authorDisplayName": "合成投稿者 14",
+      "gender": "masculine_coded",
+      "age": "working_adult",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.8,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.05,
+        "working_adult": 0.8,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0.4,
+        "1": 0.6,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.16
+    },
+    {
+      "id": "timestamp-fixture-15",
+      "text": "合成コメント15： 29:45 の確認です。\n全文ダイアログで改行と長い本文を確認します。<strong>これはHTMLではなく原文です。</strong>\n表示を省略した一覧からも同じ既存ダイアログを開けます。範囲外の 0:30 を押しても分析範囲と一覧は変わりません。",
+      "publishedAt": "2026-09-26T00:14:00.000Z",
+      "likeCount": 19,
+      "authorDisplayName": "合成投稿者 15",
+      "gender": "feminine_coded",
+      "age": "university",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.8,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.7999999999999998,
+        "4": 0.20000000000000018
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.2
+    },
+    {
+      "id": "timestamp-fixture-16",
+      "text": "合成コメント16： 49:23 は動画内の最後の秒です。49:24 は動画尺と同じなので除外されます。",
+      "publishedAt": "2026-09-26T00:15:00.000Z",
+      "likeCount": 26,
+      "authorDisplayName": "合成投稿者 16",
+      "gender": "ambiguous",
+      "age": "pre_elementary",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.8
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.8,
+        "middle_high_school": 0.05,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0.8,
+        "1": 0.19999999999999996,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0.7999999999999998,
+        "2": 0.20000000000000018,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.16
+    },
+    {
+      "id": "timestamp-fixture-17",
+      "text": "合成コメント17： 49:24 と 90:00 は動画尺以上の候補だけです。尺ありでは時間帯別の対象外になります。",
+      "publishedAt": "2026-09-26T00:16:00.000Z",
+      "likeCount": 33,
+      "authorDisplayName": "合成投稿者 17",
+      "gender": "feminine_coded",
+      "age": "university",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.8,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.7999999999999998,
+        "4": 0.20000000000000018
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0.6000000000000001,
+        "2": 0.3999999999999999,
+        "3": 0,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.08
+    },
+    {
+      "id": "timestamp-fixture-18",
+      "text": "合成コメント18：URL https://example.com/3:24 と明示時計 午後 12:30 は除外します。",
+      "publishedAt": "2026-09-26T00:17:00.000Z",
+      "likeCount": 40,
+      "authorDisplayName": "合成投稿者 18",
+      "gender": "ambiguous",
+      "age": "working_adult",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.8
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.05,
+        "working_adult": 0.8,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 1,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.7999999999999998,
+        "3": 0.20000000000000018,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.12
+    },
+    {
+      "id": "timestamp-fixture-19",
+      "text": "合成コメント19：時刻なしの本文です。検索して時間表記のない空状態を確認できます。",
+      "publishedAt": "2026-09-26T00:18:00.000Z",
+      "likeCount": 6,
+      "authorDisplayName": "合成投稿者 19",
+      "gender": "ambiguous",
+      "age": "university",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.1,
+        "ambiguous": 0.8
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.05,
+        "university": 0.8,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.7599999999999998,
+        "4": 0.2400000000000002
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.6000000000000001,
+        "3": 0.3999999999999999,
+        "4": 0
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.08
+    },
+    {
+      "id": "timestamp-fixture-20",
+      "text": "合成コメント20： 5:00 は離れた単独観測点です。好意寄りと中央帯は実際の0%です。",
+      "publishedAt": "2026-09-26T00:19:00.000Z",
+      "likeCount": 13,
+      "authorDisplayName": "合成投稿者 20",
+      "gender": "feminine_coded",
+      "age": "middle_high_school",
+      "genderProbability": 0.8,
+      "ageProbability": 0.8,
+      "genderProbabilities": {
+        "masculine_coded": 0.1,
+        "feminine_coded": 0.8,
+        "ambiguous": 0.1
+      },
+      "ageProbabilities": {
+        "pre_elementary": 0.05,
+        "middle_high_school": 0.8,
+        "university": 0.05,
+        "working_adult": 0.05,
+        "middle_older": 0.05
+      },
+      "valenceProbabilities": {
+        "0": 0.8,
+        "1": 0.19999999999999996,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "heatProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0.9999999999999996,
+        "4": 4.440892098500626e-16
+      },
+      "valenceConfidence": 0.8,
+      "heatConfidence": 0.8,
+      "bothSidesProbability": 0.12
+    }
+  ],
+  "analysis": {
+    "startedAt": "2026-09-26T00:00:00.000Z",
+    "completedAt": "2026-09-26T00:00:00.000Z",
+    "source": "sample",
+    "status": "complete",
+    "scope": "first100",
+    "order": "relevance",
+    "includeReplies": false,
+    "processed": 20,
+    "total": 20,
+    "failures": 0,
+    "elapsedSeconds": 0,
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "estimatedCostUsd": 0
+    },
+    "analyzer": {
+      "provider": "typesafe.ai",
+      "model": "synthetic-fixture-no-api",
+      "definitionVersion": 1,
+      "definitionHash": null,
+      "appVersion": "0.1.0",
+      "gitCommit": null
+    }
+  }
+}

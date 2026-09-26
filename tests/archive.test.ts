@@ -65,6 +65,16 @@ test("only schema v1 determines compatibility; git commit and app version remain
   assert.throws(() => parseAnalysisArchive({ ...value, format: "other-application" }), /このアプリの分析保存/);
 });
 
+test("schema v1 retains optional positive video duration and still accepts legacy archives", () => {
+  const legacy = archive();
+  assert.equal(Object.hasOwn(parseAnalysisArchive(legacy).video, "durationSeconds"), false);
+  const withDuration = { ...legacy, video: { ...legacy.video, durationSeconds: 2964.5 } };
+  assert.equal(parseAnalysisArchive(JSON.parse(JSON.stringify(withDuration))).video.durationSeconds, 2964.5);
+  for (const durationSeconds of [0, -1, Infinity, NaN, null, "2964"]) {
+    assert.throws(() => parseAnalysisArchive({ ...legacy, video: { ...legacy.video, durationSeconds } }), /video.durationSeconds/);
+  }
+});
+
 test("partial successes and all-zero unavailable distributions are valid", () => {
   const value = input();
   value.analysis = { ...value.analysis, status: "partial", completedAt: null, processed: 5, total: 10, failures: 2 };
