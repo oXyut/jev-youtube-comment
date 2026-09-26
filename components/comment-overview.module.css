@@ -1,0 +1,48 @@
+.overview { border-block: 1px solid #e6e6e6; padding: 10px 0 14px; margin-bottom: 18px; }
+.heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px; }
+.overviewGrid { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(285px, 1fr); gap: 28px; }
+.overviewGrid > * { min-width: 0; }
+.map { width: 100%; height: 340px; display: block; overflow: visible; }
+.mapPoint { cursor: pointer; outline: none; }
+.mapPoint:focus-visible .focusRing, .mapPoint:hover .focusRing { opacity: 1; }
+.mapFooter { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.commentSelect { width: 310px; max-width: 100%; font-size: 12px !important; }
+.mapHint { font-size: 11px; color: #606060; }
+.summary { min-width: 0; padding-top: 8px; }
+.stackedBar { height: 18px; display: flex; overflow: hidden; border-radius: 4px; background: #f2f2f2; margin-top: 12px; }
+.toneLegend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+.toneName { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #606060; white-space: nowrap; }
+.toneName > span { width: 7px; height: 7px; border-radius: 50%; }
+.toneCount { display: block; font-size: 14px; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.toneCount small { font-size: 12px; color: #606060; }
+.mixedSummary { border-top: 1px solid #e6e6e6; padding-top: 12px; margin-top: 14px; }
+.mixedLabel { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.mixedTrack { background: #f0edf5; border-radius: 3px; height: 6px; overflow: hidden; margin: 9px 0; }
+.mixedTrack > span { display: block; height: 100%; background: #8e82ae; }
+.mapLegend { display: flex; gap: 8px 14px; flex-wrap: wrap; margin-top: 12px; font-size: 11px; color: #606060; }
+.mapLegend > span { display: inline-flex; gap: 6px; align-items: center; }
+.legendMixed { display: inline-block; width: 10px; height: 10px; border: 2px solid #766398; border-radius: 50%; }
+.likeLegend { margin-top: 12px; }
+.likeLegend > div { display: flex; gap: 14px; margin-block: 4px; }
+.likeLegend > div > span { display: flex; align-items: center; gap: 5px; }
+.likeLegend small { font-size: 11px; white-space: nowrap; }
+.collapsedGrid .summary { display: grid; grid-template-columns: 165px minmax(150px, 1fr) minmax(290px, 1fr); align-items: center; gap: 10px 24px; }
+.collapsedGrid .stackedBar, .collapsedGrid .toneLegend { margin-top: 0; }
+.collapsedGrid .toneCount { display: inline; margin-left: 13px; font-size: 12px; }
+.collapsedGrid .mixedSummary { grid-column: 2 / -1; margin: 0; padding-top: 8px; }
+@media (max-width: 1000px) {
+  .overviewGrid { grid-template-columns: minmax(0, 1.5fr) minmax(270px, 1fr); gap: 20px; }
+  .mapFooter { flex-wrap: wrap; gap: 6px; }
+  .mapHint { display: none; }
+  .toneLegend { gap: 6px; }
+  .collapsedGrid .summary { grid-template-columns: 1fr; gap: 10px; }
+  .collapsedGrid .mixedSummary { grid-column: auto; }
+}
+@media (max-width: 699px) {
+  .overviewGrid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .summary { border-top: 1px solid #e6e6e6; padding-top: 14px; }
+  .collapsedGrid .summary { border-top: 0; }
+  .commentSelect { width: 100%; }
+  .heading { gap: 4px; }
+  .heading button { font-size: 12px; }
+}
