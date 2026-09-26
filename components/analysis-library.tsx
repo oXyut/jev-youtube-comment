@@ -25,6 +25,7 @@ import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import { formatCommentScope } from "@/lib/comment-scope";
 import {
   parseAnalysisArchive,
   type AnalysisArchive,
@@ -250,6 +251,7 @@ export function AnalysisLibrary({ snapshot, disabled, onLoad, autoSaveToken = nu
             <Radio checked={selectedId === entry.id} size="small" tabIndex={-1} disableRipple slotProps={{ input: { "aria-label": `${entry.video.title}を選択` } }} sx={{ ml: -1, mr: 0.5, mt: 0.5, pointerEvents: "none" }} />
             <ListItemText disableTypography primary={<Typography variant="body2" sx={{ fontWeight: 600, overflowWrap: "anywhere" }}>{entry.video.title}</Typography>} secondary={<Box sx={{ mt: 0.6 }}>
               <Typography variant="caption" color="text.secondary">{savedDate(entry.savedAt)} 保存・{entry.itemCount}件</Typography>
+              <Typography variant="caption" component="div" color="text.secondary">取得範囲：{formatCommentScope(entry.analysis)}</Typography>
               <Stack direction="row" sx={{ gap: 0.6, mt: 0.7, flexWrap: "wrap" }}>
                 <Chip size="small" label={entry.analysis.source === "sample" ? "サンプル" : "Jevで分析"} sx={{ height: 21, fontSize: 11, bgcolor: entry.analysis.source === "sample" ? "#f0f1f3" : "#e8f0fa", color: entry.analysis.source === "sample" ? "#606060" : "#426483" }} />
                 <Chip size="small" label={entry.analysis.status === "partial" ? "部分保存" : "完了"} sx={{ height: 21, fontSize: 11, bgcolor: entry.analysis.status === "partial" ? "#fff2d7" : "#edf3ed", color: entry.analysis.status === "partial" ? "#815815" : "#476a4b" }} />

@@ -1,3 +1,5 @@
+import { isPositiveInteger } from "./comment-scope";
+
 export function parseVideoId(raw: string): string | null {
   try {
     const url = new URL(raw.trim());
@@ -41,11 +43,12 @@ export type RawComment = {
   authorProfileImageUrl?: string;
 };
 export async function getComments(videoId: string, limit?: number, onPage?: (loaded: number, total: number) => void) {
+  if (limit !== undefined && !isPositiveInteger(limit)) throw new Error("取得件数は1以上の整数で指定してください。");
   if (!key()) throw new Error("YOUTUBE_DATA_API_KEY が設定されていません。");
   const all: RawComment[] = []; let token = ""; let total = 0;
   do {
     const url = new URL(api + "/commentThreads");
-    url.searchParams.set("part", "snippet"); url.searchParams.set("videoId", videoId); url.searchParams.set("maxResults", "100"); url.searchParams.set("order", "relevance"); url.searchParams.set("textFormat", "plainText"); url.searchParams.set("key", key()!);
+    url.searchParams.set("part", "snippet"); url.searchParams.set("videoId", videoId); url.searchParams.set("maxResults", String(limit === undefined ? 100 : Math.min(100, limit - all.length))); url.searchParams.set("order", "relevance"); url.searchParams.set("textFormat", "plainText"); url.searchParams.set("key", key()!);
     if (token) url.searchParams.set("pageToken", token);
     const res = await fetch(url, { cache: "no-store" }); const body = await res.json();
     if (!res.ok) throw new Error(body.error?.message ?? "YouTubeコメントを取得できませんでした。");

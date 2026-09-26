@@ -12,6 +12,7 @@ import { analysisStoreErrorResponse, AnalysisStoreError, createAnalysisStore } f
 import { sampleItems, sampleVideo } from "../lib/sample-data";
 import { POST } from "../app/api/analyses/route";
 import { GET as loadRoute } from "../app/api/analyses/[id]/route";
+import { formatCommentScope, type CommentScope } from "../lib/comment-scope";
 
 function input(): AnalysisSaveInput {
   return {
@@ -72,6 +73,33 @@ test("schema v1 retains optional positive video duration and still accepts legac
   assert.equal(parseAnalysisArchive(JSON.parse(JSON.stringify(withDuration))).video.durationSeconds, 2964.5);
   for (const durationSeconds of [0, -1, Infinity, NaN, null, "2964"]) {
     assert.throws(() => parseAnalysisArchive({ ...legacy, video: { ...legacy.video, durationSeconds } }), /video.durationSeconds/);
+  }
+});
+
+test("custom and percentage scopes survive storage, reload and JSON export alongside legacy scopes", async (context) => {
+  const store = createAnalysisStore(await temporaryDirectory(context));
+  const scopes: CommentScope[] = [
+    { scope: "first100" }, { scope: "all" }, { scope: "count", limit: 137 },
+    { scope: "percentage", percentage: 10, basisCount: 1234 },
+  ];
+  for (const scope of scopes) {
+    const value = input();
+    value.analysis = { ...value.analysis, ...scope };
+    const saved = await store.save(value);
+    const restored = parseAnalysisArchive(JSON.parse(JSON.stringify(await store.load(saved.id))));
+    assert.deepEqual(restored.analysis, value.analysis);
+    assert.equal(formatCommentScope(restored.analysis), formatCommentScope(scope));
+  }
+});
+
+test("archives reject missing scope parameters and results beyond the confirmed limit", () => {
+  for (const scope of [
+    { scope: "count" }, { scope: "count", limit: 0 }, { scope: "count", limit: 2 },
+    { scope: "percentage", percentage: 10 }, { scope: "percentage", percentage: 101, basisCount: 100 },
+    { scope: "percentage", percentage: 1, basisCount: 100 },
+  ]) {
+    const value = input();
+    assert.throws(() => parseAnalysisSaveInput({ ...value, analysis: { ...value.analysis, ...scope } }), ArchiveValidationError);
   }
 });
 

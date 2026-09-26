@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, Box, Button, Chip, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, InputLabel, LinearProgress, MenuItem, Select, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Chip, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, InputLabel, LinearProgress, MenuItem, Select, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { CommentScopeDialog } from "@/components/comment-scope-dialog";
+import { formatCommentScope, parseCommentScope, type CommentScope } from "@/lib/comment-scope";
 import { AnalysisLibrary } from "@/components/analysis-library";
 import type { AnalysisArchive, AnalysisMetadata, AnalysisSaveInput } from "@/lib/analysis-archive";
 import packageInfo from "../package.json";
@@ -46,7 +48,7 @@ export default function Home() {
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [autoSaveToken, setAutoSaveToken] = useState<string | null>(null);
   const [loadedSavedAt, setLoadedSavedAt] = useState<string | null>(null);
-  const [scope, setScope] = useState<"first100" | "all">("first100");
+  const [selection, setSelection] = useState<CommentScope>({ scope: "first100" });
   const [monitorExpanded, setMonitorExpanded] = useState(false);
   const [tab, setTab] = useState<"comments" | "demographics" | "timestamps">("comments");
   const [analysisGeneration, setAnalysisGeneration] = useState(0);
@@ -73,12 +75,12 @@ export default function Home() {
     if (!video || !items.length || (!sample && !provenance)) return null;
     return { video, items, analysis: {
       startedAt: provenance?.startedAt ?? null, completedAt: provenance?.completedAt ?? null,
-      source: sample ? "sample" : "jev", status: analysisComplete ? "complete" : "partial", scope,
+      source: sample ? "sample" : "jev", status: analysisComplete ? "complete" : "partial", ...selection,
       order: "relevance", includeReplies: false, processed: items.length + failures,
       total: Math.max(total, items.length + failures), failures, elapsedSeconds: elapsed, usage,
       analyzer: provenance?.analyzer ?? { provider: "typesafe.ai", model: "sample-fixture", definitionVersion: 1, definitionHash: null, appVersion: packageInfo.version, gitCommit: null },
     } };
-  }, [video, items, sample, provenance, analysisComplete, scope, total, failures, elapsed, usage]);
+  }, [video, items, sample, provenance, analysisComplete, selection, total, failures, elapsed, usage]);
   const groups = useMemo(() => groupItems(visible), [visible]);
   useEffect(() => {
     if (selectedGroup && !groups.some(group => group.key === selectedGroup && group.count > 0 && groupInRange(group, filters))) setSelectedGroup(null);
@@ -95,7 +97,7 @@ export default function Home() {
     try {
       const { sampleItems, sampleVideo } = await import("@/lib/sample-data");
       setProvenance(null); setAnalysisComplete(true); setAutoSaveToken(null); setLoadedSavedAt(null); setElapsed(0); setUsage(emptyUsage); setSpeed(0);
-      setItems(sampleItems); setVideo(sampleVideo); setSample(true); setStatus(""); setError(""); setTotal(sampleItems.length); setProcessed(sampleItems.length); setFailures(0); setScope("first100"); setChangeOpen(false); resetView();
+      setItems(sampleItems); setVideo(sampleVideo); setSample(true); setStatus(""); setError(""); setTotal(sampleItems.length); setProcessed(sampleItems.length); setFailures(0); setSelection({ scope: "first100" }); setChangeOpen(false); resetView();
     } catch { setError("サンプルを読み込めませんでした。もう一度お試しください。"); }
     finally { busy.current = false; setChecking(false); }
   }
@@ -108,20 +110,20 @@ export default function Home() {
       if (!response.ok) throw new Error(data.error ?? "動画を読み込めませんでした。");
       setProvenance(null); setAnalysisComplete(false); setAutoSaveToken(null); setLoadedSavedAt(null);
       setVideo(data); setItems([]); setSample(false); setProcessed(0); setTotal(0); setStatus(""); setFailures(0); resetView(); setChangeOpen(false);
-      if (data.count > 100) setConfirmOpen(true);
-      else await start(data, "first100");
+      setSelection({ scope: "count", limit: Math.min(100, data.count || 100) }); setConfirmOpen(true);
     } catch (cause) { setError(cause instanceof Error ? cause.message : "URLを確認してください。"); }
     finally { busy.current = false; setChecking(false); }
   }
-  async function start(info = video, selectedScope: "first100" | "all" = "first100") {
-    if (!info || running) return;
+  async function start(selectedScope: CommentScope) {
+    const info = video;
+    if (!info || busy.current) return;
     setProvenance(null); setAnalysisComplete(false); setAutoSaveToken(null); setLoadedSavedAt(null);
-    busy.current = true; setConfirmOpen(false); setError(""); setItems([]); setProcessed(0); setTotal(0); setSpeed(0); setFailures(0); setElapsed(0); setUsage(emptyUsage); setMonitorExpanded(true); setScope(selectedScope); setStatus("YouTubeからコメントを取得中…"); setRunning(true); setSample(false); resetView();
+    busy.current = true; setConfirmOpen(false); setError(""); setItems([]); setProcessed(0); setTotal(0); setSpeed(0); setFailures(0); setElapsed(0); setUsage(emptyUsage); setMonitorExpanded(true); setSelection(selectedScope); setStatus("YouTubeからコメントを取得中…"); setRunning(true); setSample(false); resetView();
     const timer = window.setInterval(() => setElapsed(n => n + 1), 1000);
     abort.current = new AbortController();
     let completed = false;
     try {
-      const response = await fetch("/api/classify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: `https://www.youtube.com/watch?v=${info.id}`, scope: selectedScope }), signal: abort.current.signal });
+      const response = await fetch("/api/classify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: `https://www.youtube.com/watch?v=${info.id}`, ...selectedScope }), signal: abort.current.signal });
       if (!response.ok || !response.body) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error ?? "分類を開始できませんでした。");
@@ -151,7 +153,7 @@ export default function Home() {
     setItems(archive.items); setVideo(archive.video); setSample(analysis.source === "sample");
     setProvenance({ startedAt: analysis.startedAt, completedAt: analysis.completedAt, analyzer: analysis.analyzer });
     setAnalysisComplete(analysis.status === "complete"); setAutoSaveToken(null); setLoadedSavedAt(archive.savedAt);
-    setScope(analysis.scope); setProcessed(analysis.processed); setTotal(analysis.total); setFailures(analysis.failures);
+    setSelection(parseCommentScope(analysis)); setProcessed(analysis.processed); setTotal(analysis.total); setFailures(analysis.failures);
     setElapsed(analysis.elapsedSeconds); setUsage(analysis.usage); setSpeed(analysis.elapsedSeconds > 0 ? analysis.processed / analysis.elapsedSeconds : 0);
     setError(""); setStatus(analysis.status === "complete" ? "保存した分析結果を表示しています" : "保存した途中結果を表示しています");
     setMonitorExpanded(false); setChangeOpen(false); setConfirmOpen(false); resetView();
@@ -200,7 +202,7 @@ export default function Home() {
         </Stack>
         <Box sx={{ textAlign: { md: "right" }, flexShrink: 0 }}>
           <Typography variant="body2">分析済み {items.length}件 ／ 動画全体 約{video.count.toLocaleString()}件</Typography>
-          <Typography variant="caption" color="text.secondary">取得：関連度順・{scope === "all" ? "全件" : "先頭100件まで"}・返信を除く</Typography>
+          <Typography variant="caption" color="text.secondary">取得：関連度順・{formatCommentScope(selection)}・返信を除く</Typography>
           {loadedSavedAt && <Typography variant="caption" component="div" color="text.secondary">保存：{new Date(loadedSavedAt).toLocaleString("ja-JP")} · 投稿者画像は省略</Typography>}
         </Box>
       </header>}
@@ -218,7 +220,7 @@ export default function Home() {
         <Collapse in={monitorExpanded}><Typography sx={{ display: "block", mt: 1 }} variant="caption">成功 {items.length}件 · 失敗 {failures}件 · 入力 {usage.inputTokens.toLocaleString()} tokens · 出力 {usage.outputTokens.toLocaleString()} tokens · 推定費用 ${usage.estimatedCostUsd.toFixed(6)}</Typography></Collapse>
       </Box>}
       {failures > 0 && <Alert severity="warning" sx={{ mb: 1 }}>分類に失敗した{failures}件を除き、成功した{items.length}件を集計しています。</Alert>}
-      {!sample && !running && items.length === 0 && !status && <Button variant="contained" onClick={() => video.count > 100 ? setConfirmOpen(true) : void start(video, "first100")}>分析範囲を選ぶ</Button>}
+      {!sample && !running && items.length === 0 && !status && <Button variant="contained" onClick={() => setConfirmOpen(true)}>分析範囲を選ぶ</Button>}
       <Tabs value={tab} onChange={(_, value) => setTab(value)} aria-label="分析の表示" sx={{ borderBottom: "1px solid", borderColor: "divider" }}>
         <Tab value="comments" label="コメント" id="comments-tab" aria-controls="comments-panel" />
         <Tab value="demographics" label="性別・年代別" id="demographics-tab" aria-controls="demographics-panel" />
@@ -247,6 +249,6 @@ export default function Home() {
     </>}
     {error && <Alert severity="error" sx={{ mt: 2 }} onClose={() => setError("")}>{error}</Alert>}
     <Dialog open={changeOpen} onClose={() => !checking && setChangeOpen(false)} fullWidth maxWidth="sm"><DialogTitle>分析する動画を変更</DialogTitle><DialogContent>{urlForm}{error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}</DialogContent><DialogActions><Button onClick={() => setChangeOpen(false)} disabled={checking}>キャンセル</Button></DialogActions></Dialog>
-    <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} fullWidth maxWidth="sm"><DialogTitle>コメントの分析範囲</DialogTitle><DialogContent><DialogContentText>動画全体には約{video?.count.toLocaleString()}件のコメントがあります。関連度順の先頭100件、または全件の先頭コメントを取得して分析できます。返信は含みません。全件では処理時間とJev利用料が増えます。</DialogContentText></DialogContent><DialogActions sx={{ flexWrap: "wrap", gap: 1, px: 3, pb: 2 }}><Button onClick={() => setConfirmOpen(false)}>キャンセル</Button><Button variant="outlined" onClick={() => void start(video, "first100")}>関連度順の先頭100件</Button><Button variant="contained" onClick={() => void start(video, "all")}>全件を分析</Button></DialogActions></Dialog>
+    {confirmOpen && video && <CommentScopeDialog count={video.count} onClose={() => setConfirmOpen(false)} onStart={selectedScope => void start(selectedScope)} />}
   </Box>;
 }
