@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { classifyComment, getAnalyzerMetadata } from "@/lib/jev";
 import { getComments, parseVideoId } from "@/lib/youtube";
+import { commentLimit, parseCommentScope, type CommentScope } from "@/lib/comment-scope";
 export const runtime = "nodejs";
 export const maxDuration = 300;
 function line(data: unknown) { return new TextEncoder().encode(JSON.stringify(data) + "\n"); }
@@ -9,10 +10,13 @@ function usageSnapshot(inputTokens: number, outputTokens: number) {
   return { inputTokens, outputTokens, estimatedCostUsd: inputTokens * INPUT_PRICE_USD_PER_MILLION / 1_000_000 };
 }
 export async function POST(req: NextRequest) {
-  let input: { url?: string; scope?: "first100" | "all" };
+  let input: Record<string, unknown>;
   try { input = await req.json(); } catch { return new Response("Invalid JSON", { status: 400 }); }
-  if (!input || typeof input !== "object" || Array.isArray(input) || (input.url !== undefined && typeof input.url !== "string") || (input.scope !== undefined && input.scope !== "first100" && input.scope !== "all")) return Response.json({ error: "動画URLと有効な分析範囲を指定してください。" }, { status: 400 });
-  const id = parseVideoId(input.url ?? "");
+  if (!input || typeof input !== "object" || Array.isArray(input) || (input.url !== undefined && typeof input.url !== "string")) return Response.json({ error: "動画URLと有効な分析範囲を指定してください。" }, { status: 400 });
+  let selection: CommentScope;
+  try { selection = parseCommentScope({ ...input, scope: input.scope === undefined ? "first100" : input.scope }); }
+  catch (error) { return Response.json({ error: error instanceof Error ? error.message : "分析範囲が不正です。" }, { status: 400 }); }
+  const id = parseVideoId(typeof input.url === "string" ? input.url : "");
   if (!id) return new Response(JSON.stringify({ error: "YouTube動画のURLを入力してください。" }), { status: 400 });
   if (!process.env.TYPESAFE_API_KEY) return new Response(JSON.stringify({ error: "TYPESAFE_API_KEY が設定されていません。" }), { status: 503 });
   const stream = new ReadableStream<Uint8Array>({
@@ -22,8 +26,8 @@ export async function POST(req: NextRequest) {
       void (async () => {
         try {
           send({ type: "status", phase: "fetching", message: "YouTubeからコメントを取得中…", startedAt: new Date(started).toISOString(), analyzer: getAnalyzerMetadata() });
-          const { comments, total } = await getComments(id, input.scope === "all" ? undefined : 100);
-          if (total > 100 && input.scope !== "first100" && input.scope !== "all") { send({ type: "error", message: "コメントが100件を超えています。分析範囲の選択が必要です。" }); return; }
+          const { comments, total } = await getComments(id, commentLimit(selection));
+          if (total > 100 && input.scope === undefined) { send({ type: "error", message: "コメントが100件を超えています。分析範囲の選択が必要です。" }); return; }
           if (!comments.length) { send({ type: "error", message: "取得できる公開コメントがありません。" }); return; }
           const processingStarted = Date.now();
           send({ type: "start", total: comments.length, sourceTotal: total });

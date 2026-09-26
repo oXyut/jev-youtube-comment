@@ -1,4 +1,5 @@
 import { ages, genders, type Item, type Video } from "./analysis";
+import { commentLimit, parseCommentScope, type CommentScope } from "./comment-scope";
 
 export const ANALYSIS_ARCHIVE_FORMAT = "jev-youtube-comment-analysis" as const;
 export const ANALYSIS_ARCHIVE_SCHEMA_VERSION = 1 as const;
@@ -8,7 +9,6 @@ export type AnalysisMetadata = {
   completedAt: string | null;
   source: "jev" | "sample";
   status: "complete" | "partial";
-  scope: "first100" | "all";
   order: "relevance";
   includeReplies: false;
   processed: number;
@@ -24,7 +24,7 @@ export type AnalysisMetadata = {
     appVersion: string;
     gitCommit: string | null;
   };
-};
+} & CommentScope;
 
 export type AnalysisSaveInput = { video: Video; items: Item[]; analysis: AnalysisMetadata };
 export type AnalysisArchive = AnalysisSaveInput & {
@@ -153,9 +153,14 @@ function parseMetadata(value: unknown, itemCount: number): AnalysisMetadata {
   if (processed > total || (status === "complete" && processed !== total)) invalid("analysis.total", "処理件数・完了状態と一致しません。");
   if (raw.includeReplies !== false) invalid("analysis.includeReplies", "返信を含む保存形式には対応していません。");
   if (analyzer.definitionVersion !== 1) invalid("analysis.analyzer.definitionVersion", "未対応の分類定義バージョンです。");
+  let selection: CommentScope;
+  try { selection = parseCommentScope(raw); }
+  catch (error) { invalid("analysis.scope", error instanceof Error ? error.message : "分析範囲が不正です。"); }
+  const limit = commentLimit(selection);
+  if (limit !== undefined && total > limit) invalid("analysis.total", "指定した取得件数の上限を超えています。");
   return {
     startedAt, completedAt, source: member(raw.source, ["jev", "sample"], "analysis.source"), status,
-    scope: member(raw.scope, ["first100", "all"], "analysis.scope"), order: member(raw.order, ["relevance"], "analysis.order"), includeReplies: false,
+    ...selection, order: member(raw.order, ["relevance"], "analysis.order"), includeReplies: false,
     processed, total, failures, elapsedSeconds: number(raw.elapsedSeconds, "analysis.elapsedSeconds"),
     usage: {
       inputTokens: number(usage.inputTokens, "analysis.usage.inputTokens", true),

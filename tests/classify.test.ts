@@ -8,6 +8,7 @@ import type { Item } from "../lib/analysis";
 import { parseAnalysisSaveInput, type AnalysisMetadata } from "../lib/analysis-archive";
 import { heatStages, valenceStages } from "../lib/scales";
 import packageInfo from "../package.json";
+import type { CommentScope } from "../lib/comment-scope";
 
 type Usage = { inputTokens: number; outputTokens: number; estimatedCostUsd: number };
 type StreamEvent = {
@@ -27,10 +28,49 @@ function environment(context: TestContext, values: Record<string, string | undef
   }
 }
 
-function request(scope?: "first100" | "all") {
+function request(scope?: "first100" | "all" | CommentScope) {
   return new NextRequest("http://localhost/api/classify", {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url: "https://www.youtube.com/watch?v=example1234", ...(scope ? { scope } : {}) }),
+    body: JSON.stringify({ url: "https://www.youtube.com/watch?v=example1234", ...(typeof scope === "object" ? scope : scope ? { scope } : {}) }),
+  });
+}
+
+for (const { selection, available, expected, pages } of [
+  { selection: { scope: "count", limit: 1 }, available: 250, expected: 1, pages: [1] },
+  { selection: { scope: "count", limit: 137 }, available: 250, expected: 137, pages: [100, 37] },
+  { selection: { scope: "count", limit: 200 }, available: 250, expected: 200, pages: [100, 100] },
+  { selection: { scope: "count", limit: 500 }, available: 105, expected: 105, pages: [100, 100] },
+  { selection: { scope: "percentage", percentage: 10, basisCount: 1234 }, available: 250, expected: 124, pages: [100, 24] },
+  { selection: { scope: "percentage", percentage: 10, basisCount: 50 }, available: 50, expected: 5, pages: [5] },
+  { selection: { scope: "percentage", percentage: 100, basisCount: 105 }, available: 250, expected: 105, pages: [100, 5] },
+  { selection: { scope: "all" }, available: 250, expected: 250, pages: [100, 100, 100] },
+] satisfies { selection: CommentScope; available: number; expected: number; pages: number[] }[]) {
+  test(`bounded API work for ${JSON.stringify(selection)} with ${available} available comments`, async (context) => {
+    environment(context);
+    const sizes: number[] = [];
+    let classifications = 0;
+    context.mock.method(globalThis, "fetch", async (input: string | URL | Request) => {
+      const url = new URL(String(input));
+      if (url.hostname === "www.googleapis.com") {
+        const offset = Number(url.searchParams.get("pageToken") ?? 0);
+        const size = Number(url.searchParams.get("maxResults"));
+        sizes.push(size);
+        const length = Math.min(size, available - offset);
+        return Response.json({ items: Array.from({ length }, (_, index) => youtubeThread(offset + index + 1)),
+          pageInfo: { totalResults: available }, ...(offset + length < available ? { nextPageToken: String(offset + length) } : {}) });
+      }
+      assert.equal(url.href, "https://api.typesafe.ai/v1/systemone");
+      classifications++;
+      return Response.json(classification(1));
+    });
+    const response = await POST(request(selection));
+    const events = eventsFromText(await response.text());
+    assert.deepEqual(sizes, pages);
+    assert.equal(classifications, expected);
+    assert.equal(events.find(event => event.type === "start")!.total, expected);
+    assert.equal(events.filter(event => event.type === "item").length, expected);
+    assert.equal(events.at(-1)!.type, "complete");
+    assert.equal(events.at(-1)!.processed, expected);
   });
 }
 
