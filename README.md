@@ -15,6 +15,22 @@ YouTube動画の公開コメントを取得し、Jevで感情の向き・熱量�
 
 既存のnpmキャッシュに所有権エラーがある場合は、`npm ci --cache /tmp/jev-npm-cache` で一時キャッシュを利用できます。
 
+## ファビコン・メタデータ
+
+名称・説明文・言語・テーマカラーは `lib/site.ts` で管理し、ページのタイトル、Open Graph / Twitter Card、Web App Manifestで共通利用します。青い吹き出しと分析グラフのアイコンを、タブ・ブックマーク・ホーム画面で使用します。
+
+- `app/icon.svg`：編集用のベクター原稿兼SVGファビコン。
+- `app/favicon.ico`：16 / 32 / 48pxの互換用ファビコン。
+- `app/apple-icon.png`：180pxのApple用アイコン。
+- `app/manifest.ts`、`public/icons/`：ホーム画面向けの名称・配色と192 / 512pxアイコン、512pxのmaskableアイコン。
+- `assets/social-card.svg`、`public/social-card.png`：共有用画像の原稿と1200 × 630pxのPNG。
+
+公開するときは `.env` またはホスティング環境で `SITE_URL` に実際のオリジン（例：`https://your-domain.example`）を設定してから `npm run build` を実行してください。canonical、`og:url`、Open Graph / Twitterの画像URLに使用します。パス・クエリ・認証情報を含む値はエラーにします。未設定のローカル利用でも起動でき、仮のURLや画像URLは出力しません。タイトル・説明文・アイコンは常に出力します。
+
+アイコンや共有画像のSVGを編集したら `npm run assets:metadata` で画像を再生成します。共有画像の日本語には、ヒラギノ角ゴまたはNoto Sans CJK JPが必要です。生成済み画像はGit管理するため、通常のビルド時にフォントや画像生成処理は不要です。ホーム画面用メタデータの追加であり、オフライン利用は提供しません。
+
+アイコンとManifestのタグは[Next.jsのファイルベースMetadata API](https://nextjs.org/docs/app/api-reference/file-conventions/metadata)で自動生成します。
+
 ## 分析・取得
 
 コメントが100件を超える動画では、関連度順の先頭100件または全件を選択します。コメントスレッドの先頭コメントを取得し、返信は含みません。Jevは最大4並列で処理し、成功結果をNDJSONで順次表示します。進捗・経過時間・速度・失敗数・トークン・推定費用を確認できます。失敗したコメントは集計から除き、成功分を残します。
