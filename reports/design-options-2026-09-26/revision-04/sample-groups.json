@@ -1,0 +1,166 @@
+{
+  "mock": true,
+  "scope": "100 analyzed sample comments, not authors",
+  "ages": [
+    "小学生以下",
+    "中高生",
+    "大学生",
+    "社会人",
+    "中年以上"
+  ],
+  "genders": [
+    "男性的な文体",
+    "女性的な文体",
+    "判定保留"
+  ],
+  "groups": [
+    {
+      "age": "小学生以下",
+      "gender": "男性的な文体",
+      "count": 1,
+      "critical": 0,
+      "center": 1,
+      "positive": 0,
+      "meanValence": 0
+    },
+    {
+      "age": "小学生以下",
+      "gender": "女性的な文体",
+      "count": 1,
+      "critical": 0,
+      "center": 0,
+      "positive": 1,
+      "meanValence": 1.2
+    },
+    {
+      "age": "小学生以下",
+      "gender": "判定保留",
+      "count": 3,
+      "critical": 1,
+      "center": 1,
+      "positive": 1,
+      "meanValence": -0.1
+    },
+    {
+      "age": "中高生",
+      "gender": "男性的な文体",
+      "count": 6,
+      "critical": 3,
+      "center": 1,
+      "positive": 2,
+      "meanValence": -0.65
+    },
+    {
+      "age": "中高生",
+      "gender": "女性的な文体",
+      "count": 4,
+      "critical": 1,
+      "center": 1,
+      "positive": 2,
+      "meanValence": 0.15
+    },
+    {
+      "age": "中高生",
+      "gender": "判定保留",
+      "count": 5,
+      "critical": 1,
+      "center": 2,
+      "positive": 2,
+      "meanValence": 0
+    },
+    {
+      "age": "大学生",
+      "gender": "男性的な文体",
+      "count": 8,
+      "critical": 2,
+      "center": 2,
+      "positive": 4,
+      "meanValence": 0.25
+    },
+    {
+      "age": "大学生",
+      "gender": "女性的な文体",
+      "count": 9,
+      "critical": 1,
+      "center": 2,
+      "positive": 6,
+      "meanValence": 0.6
+    },
+    {
+      "age": "大学生",
+      "gender": "判定保留",
+      "count": 8,
+      "critical": 1,
+      "center": 2,
+      "positive": 5,
+      "meanValence": 0.55
+    },
+    {
+      "age": "社会人",
+      "gender": "男性的な文体",
+      "count": 11,
+      "critical": 1,
+      "center": 2,
+      "positive": 8,
+      "meanValence": 0.85
+    },
+    {
+      "age": "社会人",
+      "gender": "女性的な文体",
+      "count": 14,
+      "critical": 1,
+      "center": 2,
+      "positive": 11,
+      "meanValence": 0.95
+    },
+    {
+      "age": "社会人",
+      "gender": "判定保留",
+      "count": 10,
+      "critical": 0,
+      "center": 3,
+      "positive": 7,
+      "meanValence": 0.9
+    },
+    {
+      "age": "中年以上",
+      "gender": "男性的な文体",
+      "count": 6,
+      "critical": 1,
+      "center": 1,
+      "positive": 4,
+      "meanValence": 0.65
+    },
+    {
+      "age": "中年以上",
+      "gender": "女性的な文体",
+      "count": 6,
+      "critical": 1,
+      "center": 1,
+      "positive": 4,
+      "meanValence": 0.65
+    },
+    {
+      "age": "中年以上",
+      "gender": "判定保留",
+      "count": 8,
+      "critical": 1,
+      "center": 2,
+      "positive": 5,
+      "meanValence": 0.6
+    }
+  ],
+  "totals": {
+    "count": 100,
+    "critical": 15,
+    "center": 23,
+    "positive": 62
+  },
+  "filteredCount": 52,
+  "filteredTotals": {
+    "count": 52,
+    "critical": 9,
+    "center": 10,
+    "positive": 33
+  }
+}

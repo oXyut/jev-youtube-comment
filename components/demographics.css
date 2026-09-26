@@ -1,0 +1,59 @@
+.demographics-comparison-grid {
+  display: grid !important;
+  grid-template-columns: 136px minmax(0, 1fr) minmax(0, 1.3fr);
+  column-gap: 28px;
+  align-items: center;
+}
+.demographics-comparison-header { padding: 0 10px 8px; align-items: end; }
+.demographics-comparison-row { width: 100%; padding: 7px 10px !important; border-radius: 5px !important; text-align: left !important; }
+.demographics-row-label { justify-self: start; }
+.demographics-count-cell { display: flex; gap: 9px; align-items: center; min-width: 0; }
+.demographics-count-track { height: 24px; position: relative; flex: 1; }
+.demographics-composition { display: flex; height: 27px; overflow: hidden; width: 100%; border-radius: 4px; }
+.demographics-composition span { color: #fff; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.demographics-axis { display: flex; justify-content: space-between; font-size: 12px; color: #60666e; border-bottom: 1px solid #dce0e5; padding-bottom: 5px; font-variant-numeric: tabular-nums; }
+.demographics-comparison-header > div:nth-child(2) .demographics-axis { margin-right: 44px; }
+.demographics-detail { min-width: 0; border-left: 1px solid #e0e3e7; padding-left: 24px; }
+.demographics-detail.demographics-detail-wide { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 94px; box-sizing: border-box; margin-top: 16px; padding: 14px 0; border-left: 0; border-top: 1px solid #e0e3e7; }
+.demographics-composition-details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.demographics-score-track { height: 13px; background: #eceef0; border-radius: 3px; overflow: hidden; position: relative; }
+.demographics-score-ticks { display: flex; justify-content: space-between; margin-top: 5px; font-size: 11px; color: #626972; }
+.demographics-map-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr); gap: 24px; }
+.demographics-map-row { display: grid; grid-template-columns: 90px repeat(3, minmax(0, 1fr)); }
+.demographics-map-age { display: flex; align-items: center; justify-content: flex-end; padding-right: 12px; }
+.demographics-map-cell { display: flex; align-items: center; justify-content: center; height: 80px; border-left: 1px dashed #e1e5e9; border-bottom: 1px dashed #e1e5e9; }
+.demographics-map-cell:last-child { border-right: 1px dashed #e1e5e9; }
+.demographics-map-row:first-child .demographics-map-cell { border-top: 1px dashed #e1e5e9; }
+.demographics-map-excluded { background: #f6f7f8; }
+.demographics-map-labels { padding-top: 13px; min-height: 63px; }
+.demographics-map-legends { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 22px; }
+.demographics-bubble { position: relative; flex-shrink: 0; border-radius: 50%; }
+.demographics-bubble svg { display: block; }
+.demographics-bubble > span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700; font-variant-numeric: tabular-nums; }
+.demographics-map-point[aria-pressed="true"] .demographics-bubble { outline: 2px solid #065fd4; outline-offset: 3px; }
+.demographics-mean-legend { flex: 1; min-width: 220px; max-width: 360px; }
+.demographics-gradient { height: 14px; border-radius: 4px; margin-top: 14px; border: 1px solid #e0e3e7; }
+.demographics-ring-legend { width: 100%; border-top: 1px solid #e6e6e6; padding-top: 14px; }
+.demographics-ring-examples { display: flex; flex-wrap: wrap; gap: 12px 28px; }
+.demographics-ring-examples > div { display: flex; align-items: center; gap: 10px; }
+@media (max-width: 1000px) {
+  .demographics-comparison-grid { grid-template-columns: 126px minmax(0, 1fr) minmax(0, 1.2fr); column-gap: 18px; }
+  .demographics-map-layout { grid-template-columns: minmax(0, 1fr); }
+  .demographics-detail { padding-left: 0; border-left: 0; border-top: 1px solid #e0e3e7; padding-top: 22px; }
+}
+@media (max-width: 600px) {
+  .demographics-comparison-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); column-gap: 16px; }
+  .demographics-comparison-header > div:first-child { display: none; }
+  .demographics-comparison-header { padding: 0 4px 10px; }
+  .demographics-comparison-row { padding: 8px 4px !important; row-gap: 8px; }
+  .demographics-row-label { grid-column: 1 / -1; }
+  .demographics-detail.demographics-detail-wide { align-items: stretch; flex-direction: column; gap: 16px; }
+  .demographics-composition span { font-size: 10px; }
+  .demographics-map-row { grid-template-columns: 61px repeat(3, minmax(0, 1fr)); }
+  .demographics-map-age { padding-right: 7px; }
+  .demographics-map-age p, .demographics-map-labels p { font-size: 11px; }
+  .demographics-map-point { max-width: 100%; }
+  .demographics-map-cell { height: 84px; }
+  .demographics-map-legends { gap: 22px; }
+  .demographics-composition-details p { font-size: 11px; }
+}
